@@ -298,6 +298,9 @@ function runProgram() {
     $('#glcHr').attr('hidden', false);
     $('#glcDiv').attr('hidden', false);
   }
+  if (!somenteTabular) {
+    analisadorTabular();
+  }
 }
 
 function inuteis() {
@@ -560,7 +563,14 @@ function setLenght() {
 
 // novo código cadeira de compiladores
 
- function somenteTabularFunc() {
+function analisadorTabular() {
+  //func que faz/chama toda a nova parte
+  $('#tabelaHr').attr('hidden', false);
+  $('#tabelaDiv').attr('hidden', false);
+}
+
+function somenteTabularFunc() {
+  //função para mudar o text input para o que aceita números e etc
   somenteTabular = !somenteTabular;
   if (somenteTabular) {
     $('#ter').attr('hidden', false);
@@ -577,6 +587,7 @@ function setTerEX(ter) {
   for (let key in aws) {
     key = aws[key];
     if (/[A-Z]/g.test(key)) {
+      // testa se é maiusculo, se sim muda para minusculo e substitui no input
       let regex = new RegExp(`${key}`, 'g');
       key = key.toLowerCase();
       ter = ter.replace(regex, key);
@@ -586,6 +597,6 @@ function setTerEX(ter) {
     }
   }
   $('#t1').html(aux.slice(0, -2));
-  console.log(ter);
   return ter;
 }
+
