@@ -20,12 +20,19 @@ let somenteTabular = true;
 
 //padrão para testes
 window.onload = () => {
-  $('#nter').val('ASD');
+  $('#nter').val('ASDBCF');
   $('#ter').val('asd');
-  $('#terEX').val('asd12');
-  $('#prod').val(`S > A D
-A > 1 S | &
-D > 2 A | 2`);
+  $('#terEX').val('asd120');
+//   $('#prod').val(
+// `S > 0 A | 1 B
+// A > 1 B | 2
+// B > 0 A | 2`);
+  $('#prod').val(
+`S > A B
+B > 1 A B | &
+A > D C
+C > 2 F C | &
+F > a S s | d`);
   $('#si').val('S');
 
 }
@@ -578,10 +585,17 @@ function setLenght() {
 
 // novo código cadeira de compiladores
 
+let first = [],
+    follow = [],
+    linhasGram = [];
+
 function analisadorTabular() {
   //func que faz/chama toda a nova parte
   $('#tabelaHr').attr('hidden', false);
   $('#tabelaDiv').attr('hidden', false);
+  first = [];
+  follow = [];
+  linhasGram = [];
   firstAndFollow();
 }
 
@@ -617,9 +631,6 @@ function setTerEX(ter) {
 }
 
 function firstAndFollow() {
-  let first = [],
-    follow = [],
-    linhasGram = [];
   //separa as linhas para poder trabalhar nelas
   for (const i of linhas) {
     let aux = i.split('>');
@@ -666,8 +677,11 @@ function firstAndFollow() {
         first: []
       });
       for (const i of lin.direita) {
-        if(!/[A-Z]/g.test(i[0]) && !first[first.length - 1].first.includes(i[0])) {
-          first[first.length - 1].first.push(i[0])
+        if (
+          !/[A-Z]/g.test(i[0]) &&
+          !first[first.length - 1].first.includes(i[0])
+        ) {
+          first[first.length - 1].first.push(i[0]);
         }
       }
     } else {
@@ -686,5 +700,70 @@ function firstAndFollow() {
         }
       }
     }
+  }
+
+  // follow
+  //regra 1
+  for (const lin of linhasGram) {
+    if (lin.esquerda == inicio) {
+      follow.push({
+        esquerda: lin.esquerda,
+        direita: lin.direita,
+        follow: ['$']
+      });
+    } else {
+      follow.push({
+        esquerda: lin.esquerda,
+        direita: lin.direita,
+        follow: []
+      });
+    }
+  }
+  //regra 2 e 3
+  for (const lin in follow) {
+    for (const aws of follow) {
+      for (const a in aws.direita) {
+        if (aws.direita[a][1] == follow[lin].esquerda) {
+          //regra 2
+          if (aws.direita[a].length == 3) {
+            if (!/[A-Z]/g.test(aws.direita[a][2])) {
+              follow[lin].follow.push(aws.direita[a][2]);
+            } else {
+              for (const b of first) {
+                if (b.esquerda == aws.direita[a][2]) {
+                  follow[lin].follow.push(...b.first);
+                  follow[lin].follow = follow[lin].follow.filter(
+                    e => e !== '&'
+                  );
+                }
+                //regra 3 se length == 3
+                if (b.first.includes('&')) {
+                  if (aws.follow.length > 0) {
+                    follow[lin].follow.push(...aws.follow);
+                  } else {
+                    follow[lin].follow.push(`FOLLOW(${aws.esquerda})`);
+                  }
+                }
+              }
+            }
+          }
+          // regra 3
+          if (aws.direita[a].length == 2) {
+            if (aws.follow.length > 0) {
+              follow[lin].follow.push(...aws.follow);
+            } else {
+              follow[lin].follow.push(`FOLLOW(${aws.esquerda})`);
+            }
+          }
+        }
+      }
+    }
+  }
+  //elimina possíveis duplicatas
+  for (const aws of follow) {
+    aws.follow = [...new Set(aws.follow)];
+  }
+  for (const aws of first) {
+    aws.follow = [...new Set(aws.first)];
   }
 }
