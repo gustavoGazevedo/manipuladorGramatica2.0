@@ -17,6 +17,19 @@ let inicio = '';
 let somenteTransGLC = true;
 let somenteTabular = true;
 
+
+//padrão para testes
+window.onload = () => {
+  $('#nter').val('ASD');
+  $('#ter').val('asd');
+  $('#terEX').val('asd12');
+  $('#prod').val(`S > A D
+A > 1 S | &
+D > 2 A | 2`);
+  $('#si').val('S');
+
+}
+
 //Esses sets pegam os dados escritos nas caixas a esquerda, processam eles,
 //e escrevem a gramática na caixa da direita
 function setNT(nter) {
@@ -68,7 +81,9 @@ function runProgram() {
   [gr, glc, gsc, gi] = new Array(4).fill(true);
   //limpa os dados para mais facilmente poder utiliza-los no futuro
   prod = $('#prod').val();
-  prod = prod.replace(/ /g, '');
+  if (somenteTabular) {
+    prod = prod.replace(/ /g, '');
+  }
   linhas = prod.split('\n');
   esquerda = [];
   direita = [];
@@ -567,6 +582,7 @@ function analisadorTabular() {
   //func que faz/chama toda a nova parte
   $('#tabelaHr').attr('hidden', false);
   $('#tabelaDiv').attr('hidden', false);
+  firstAndFollow();
 }
 
 function somenteTabularFunc() {
@@ -600,3 +616,75 @@ function setTerEX(ter) {
   return ter;
 }
 
+function firstAndFollow() {
+  let first = [],
+    follow = [],
+    linhasGram = [];
+  //separa as linhas para poder trabalhar nelas
+  for (const i of linhas) {
+    let aux = i.split('>');
+    let dir = [];
+    for (const a of aux[1].split('|')) {
+      let aws = [];
+      for (const s of a.split(' ')) {
+        if (s != '') {
+          aws.push(s);
+        }
+      }
+      dir.push(aws);
+    }
+    linhasGram.push({
+      esquerda: aux[0].replace(/ /g, ''),
+      direita: dir
+    });
+  }
+  /* 
+  -- linhasGram --
+  G = {
+    S > A D
+    A > 1 S | &
+    D > 2 A | 2
+  }
+  Array(3)
+    0: {esquerda: "S", direita: Array(1)}
+    1: {esquerda: "A", direita: Array(2)}
+    2:
+      direita: Array(2)
+        0: Array(2)
+          0: "2"
+          1: "A"
+        1: Array(1)
+          0: "2"
+      esquerda: "D"
+ */
+  //encontra o first
+  for (const lin of linhasGram) {
+    if (!/[A-Z]/g.test(lin.direita[0][0])) {
+      first.push({
+        esquerda: lin.esquerda,
+        direita: lin.direita,
+        first: []
+      });
+      for (const i of lin.direita) {
+        if(!/[A-Z]/g.test(i[0]) && !first[first.length - 1].first.includes(i[0])) {
+          first[first.length - 1].first.push(i[0])
+        }
+      }
+    } else {
+      first.push({
+        esquerda: lin.esquerda,
+        direita: lin.direita,
+        first: []
+      });
+    }
+  }
+  for (let i = first.length - 1; i >= 0; i--) {
+    if (first[i].first.length == 0) {
+      for (const a of first) {
+        if (a.esquerda == first[i].direita[0][0]) {
+          first[i].first = a.first;
+        }
+      }
+    }
+  }
+}

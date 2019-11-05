@@ -42,7 +42,7 @@
           id="defaultCheck1">
         <label class="form-check-label offset-1" for="defaultCheck1">
           Somente transformação GLC
-        </label>
+        </label><br>
         <input class="form-check-input col-2" onclick="somenteTabularFunc()" type="checkbox" id="defaultCheck2">
         <label class="form-check-label offset-1" for="defaultCheck2">
           Somente analisador preditivo tabular
@@ -156,8 +156,8 @@
 
     function testProd(event) {
       let value = String.fromCharCode(event.which);
-      let aux = $('#nter').val() + $('#ter').val();
-      if (aux.includes(value) || !/[a-z]/gi.test(value)) {
+      let aux = $('#nter').val() + $('#ter').val() + $('#terEX').val();
+      if (aux.includes(value) || / |\||\&|\>|\r|\n/gi.test(value)) {
         return value;
       } else {
         alert('Não está dentro dos não-terminais ou dos terminais');
