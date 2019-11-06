@@ -108,9 +108,28 @@
     <hr id="tabelaHr" hidden>
     <div id="tabelaDiv" hidden>
       <div class="row">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Blanditiis, consectetur. Dignissimos explicabo nostrum
-        vel soluta delectus modi nesciunt laboriosam consequuntur ipsam sit nisi officia, expedita sequi quod hic, minus
-        a.
+        <div class="col-4 tableDiv">
+          <table id="tabelaFF" class="pure-table pure-table-bordered">
+            <thead id="tableHeadFF">
+              <tr>
+                <th scope="col">Não Terminal</th>
+                <th scope="col">FIRST</th>
+                <th scope="col">FOLLOW</th>
+              </tr>
+            </thead>
+            <tbody id="tableBodyFF">
+            </tbody>
+          </table>
+        </div>
+        <div class="col-8 tableDiv">
+          <table id="tabelaTA" class="pure-table pure-table-bordered">
+            <thead id="tableHeadTA">
+              
+            </thead>
+            <tbody id="tableBodyTA">
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
     <br>
@@ -157,7 +176,7 @@
     function testProd(event) {
       let value = String.fromCharCode(event.which);
       let aux = $('#nter').val() + $('#ter').val() + $('#terEX').val();
-      if (aux.includes(value) || / |\||\&|\>|\r|\n/gi.test(value)) {
+      if (aux.includes(value) || / |\||\&|\>|'|"|´|\r|\n/gi.test(value)) {
         return value;
       } else {
         alert('Não está dentro dos não-terminais ou dos terminais');

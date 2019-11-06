@@ -22,17 +22,23 @@ let somenteTabular = true;
 window.onload = () => {
   $('#nter').val('ASDBCF');
   $('#ter').val('asd');
-  $('#terEX').val('asd120');
+  $('#terEX').val('asd120()*+i');
 //   $('#prod').val(
 // `S > 0 A | 1 B
 // A > 1 B | 2
 // B > 0 A | 2`);
+//   $('#prod').val(
+// `S > A B
+// B > 1 A B | &
+// A > F C
+// C > 2 F C | &
+// F > a S s | d`);
   $('#prod').val(
 `S > A B
-B > 1 A B | &
-A > D C
-C > 2 F C | &
-F > a S s | d`);
+B > + A B | &
+A > F C
+C > * F C | &
+F > ( S ) | d`);
   $('#si').val('S');
 
 }
@@ -587,7 +593,9 @@ function setLenght() {
 
 let first = [],
     follow = [],
-    linhasGram = [];
+    linhasGram = [],
+    analisadorTabela = [],
+    terminaisUsadas = [];
 
 function analisadorTabular() {
   //func que faz/chama toda a nova parte
@@ -596,7 +604,11 @@ function analisadorTabular() {
   first = [];
   follow = [];
   linhasGram = [];
+  linhasGram = [];
+  analisadorTabela = [];
+  terminaisUsadas = [];
   firstAndFollow();
+  construirTabelaPreditiva();
 }
 
 function somenteTabularFunc() {
@@ -622,7 +634,7 @@ function setTerEX(ter) {
       key = key.toLowerCase();
       ter = ter.replace(regex, key);
     }
-    if (/[a-z1-9]/g.test(key)) {
+    if (/[a-z1-9-+*()\[\]\/'´`"]/g.test(key)) {
       aux += key + ', ';
     }
   }
@@ -764,6 +776,127 @@ function firstAndFollow() {
     aws.follow = [...new Set(aws.follow)];
   }
   for (const aws of first) {
-    aws.follow = [...new Set(aws.first)];
+    aws.first = [...new Set(aws.first)];
   }
+  let tableBody = `<tr>`;
+  for (const i in first) {
+    tableBody += `<th class="tableRow" scope="row">${first[i].esquerda}</th>`;
+    let a = 0;
+    if (a == 0) {
+      tableBody += `<td>${first[i].first.join(', ')}`;
+      a = first[i].first.length - 1;
+    } else {
+      tableBody += `${first[i].first[a]}</td>`;
+    }
+
+    a = 0;
+    if (a == 0) {
+      tableBody += `<td>${follow[i].follow.join(', ')}`;
+      a = first[i].first.length - 1;
+    } else {
+      tableBody += `${follow[i].follow[a]}</td>`;
+    }
+    tableBody += `</tr><tr>`;
+  }
+  //escreve na tela o First Follow
+  tableBody = tableBody.replace(/&/g, 'ε');
+  $('#tableBodyFF').html(tableBody);
+}
+
+function construirTabelaPreditiva() {
+  analisadorTabela = [];
+  for (const i in linhasGram) {
+    for (const f of first[i].first) {
+      terminaisUsadas.push(f);
+    }
+    for (const f of follow[i].follow) {
+      terminaisUsadas.push(f);
+    }
+  }
+  terminaisUsadas = [... new Set(terminaisUsadas)];
+  terminaisUsadas = terminaisUsadas.filter(e => e !== '&');
+  
+  //construindo tabela
+  for (const [x, lin] of linhasGram.entries()) {
+    let aux = [];
+    for (const i of terminaisUsadas) {
+      aux[i] = [];
+    }
+    if (lin.direita.length > 1) {
+      if (lin.direita[1] != '&') {
+        let aws = [...first[x].first];
+        aws = aws.filter(e => e !== '&');
+        aux[aws[0]] = lin.direita[0];
+        aux[aws[1]] = lin.direita[1];
+      } else {
+        let aws = [...first[x].first];
+        aws = aws.filter(e => e !== '&');
+        aux[aws[0]] = lin.direita[0];
+        aws = [...follow[x].follow];
+        for (const i of aws) {
+          aux[i] = lin.direita[1];
+        }
+      }
+    } else {
+      if (lin.direita[0] != '&') {
+        let aws = [...first[x].first];
+        aws = aws.filter(e => e !== '&');
+        for (const i of aws) {
+          aux[i] = lin.direita[0];
+        }
+      } else {
+        let aws = [...follow[x].follow];
+        for (const i of aws) {
+          aux[i] = lin.direita[1];
+        }
+      }
+    }
+    analisadorTabela.push({
+      esquerda: lin.esquerda,
+      tabela: aux
+    })
+  }
+
+  /* 
+  analisadorTabela = 
+  0: {esquerda: "S", tabela: Array(2)}
+  1:
+    esquerda: "B"
+    tabela: Array(3)
+      0:
+        +: (3) ["+", "A", "B"]
+      1: {$: Array(1)}
+      2: {): Array(1)}
+  2: {esquerda: "A", tabela: Array(2)}
+  3: {esquerda: "C", tabela: Array(4)}  
+  4: {esquerda: "F", tabela: Array(2)}
+  */
+
+  //desenha tabela
+
+  console.log(analisadorTabela);
+  
+  let tabHead = `<tr><th scope="col">NT Entrada</th>`;
+  for (const ter of terminaisUsadas) {
+    tabHead += `<th scope="col" style="width:">${ter}</th>`;
+  }
+  $("#tableHeadTA").html(tabHead);
+
+  let tableBody = `<tr>`;
+  for (const i in analisadorTabela) {
+    tableBody += `<th class="tableRow" scope="row">${analisadorTabela[i].esquerda}</th>`;
+    for (const a of terminaisUsadas) {
+      if (analisadorTabela[i].tabela[a].length > 0) {
+        tableBody += `<td style="padding-right: 25px; padding-left: 25px">${
+          analisadorTabela[i].esquerda
+        } → ${analisadorTabela[i].tabela[a].join('')}</td>`;
+      } else {
+        tableBody += `<td style="padding-right: 25px; padding-left: 25px"></td>`;
+      }
+    }
+    tableBody += `</tr><tr>`;
+  }
+  //escreve na tela o First Follow
+  tableBody = tableBody.replace(/&/g, 'ε');
+  $('#tableBodyTA').html(tableBody);
 }
