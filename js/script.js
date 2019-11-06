@@ -20,26 +20,36 @@ let somenteTabular = true;
 
 //padrão para testes
 window.onload = () => {
-  $('#nter').val('ASDBCF');
+  $('#nter').val('ASDBCFTE');
   $('#ter').val('asd');
   $('#terEX').val('asd120()*+i');
-//   $('#prod').val(
-// `S > 0 A | 1 B
-// A > 1 B | 2
-// B > 0 A | 2`);
-//   $('#prod').val(
-// `S > A B
-// B > 1 A B | &
-// A > F C
-// C > 2 F C | &
-// F > a S s | d`);
-  $('#prod').val(
+
+/*   $('#prod').val(
+`S > 0 A | 1 B
+A > 1 B | 2
+B > 0 A | 2`); */
+
+/*   $('#prod').val(
+`S > A B
+B > 1 A B | &
+A > F C
+C > 2 F C | &
+F > a S s | d`); */
+
+  /* $('#prod').val(
 `S > A B
 B > + A B | &
 A > F C
 C > * F C | &
-F > ( S ) | d`);
-  $('#si').val('S');
+F > ( S ) | d`); */
+
+  $('#prod').val(
+`E > T E'
+E' > + T E' | &
+T > F T'
+T' > * F T' | &
+F > ( E ) | id`);
+  $('#si').val('E');
 
 }
 
@@ -872,10 +882,7 @@ function construirTabelaPreditiva() {
   4: {esquerda: "F", tabela: Array(2)}
   */
 
-  //desenha tabela
-
-  console.log(analisadorTabela);
-  
+  //desenha tabela  
   let tabHead = `<tr><th scope="col">NT Entrada</th>`;
   for (const ter of terminaisUsadas) {
     tabHead += `<th scope="col" style="width:">${ter}</th>`;
@@ -899,4 +906,16 @@ function construirTabelaPreditiva() {
   //escreve na tela o First Follow
   tableBody = tableBody.replace(/&/g, 'ε');
   $('#tableBodyTA').html(tableBody);
+}
+
+function runEntrada() {
+  let entrada = $("#entrada").val;
+  entrada = entrada.split(' ');
+  let pilha = ['$', inicio];
+  let tabelaEntrada = [];
+  tabelaEntrada.push({
+    pilha: pilha.join(''),
+    entrada: entrada.join(''),
+    saida: ''
+  });
 }

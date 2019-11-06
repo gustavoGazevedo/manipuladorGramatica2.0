@@ -108,11 +108,11 @@
     <hr id="tabelaHr" hidden>
     <div id="tabelaDiv" hidden>
       <div class="row">
-        <div class="col-4 tableDiv">
+        <div class="col-3 tableDiv">
           <table id="tabelaFF" class="pure-table pure-table-bordered">
             <thead id="tableHeadFF">
               <tr>
-                <th scope="col">Não Terminal</th>
+                <th scope="col">NT</th>
                 <th scope="col">FIRST</th>
                 <th scope="col">FOLLOW</th>
               </tr>
@@ -121,7 +121,7 @@
             </tbody>
           </table>
         </div>
-        <div class="col-8 tableDiv">
+        <div class="col-9 tableDiv">
           <table id="tabelaTA" class="pure-table pure-table-bordered">
             <thead id="tableHeadTA">
               
@@ -130,6 +130,12 @@
             </tbody>
           </table>
         </div>
+      </div>
+      <div class="row">
+          <input type="text" class="form-control col-5" placeholder=" Entrada (ex.: ( id * id ) + id)" id="entrada" />
+          <div onclick="runEntrada()" class="col-3">
+              <button type="button" class="btn btn-default">Acionar</button>
+            </div>
       </div>
     </div>
     <br>
