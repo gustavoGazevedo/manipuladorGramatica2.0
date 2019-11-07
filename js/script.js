@@ -20,39 +20,53 @@ let somenteTabular = true;
 
 
 //padrão para testes
-window.onload = () => {
-  $('#nter').val('ASDBCFTE');
-  setNT('ASDBCFTE');
-  $('#ter').val('asd');
-  $('#terEX').val('asd120()*+i');
-  setTerEX('asd120()*+i');
+function exemploTeste() {
+  if (!document.getElementById('defaultCheck1').checked) {
+    $('#nter').val('ASDBCFTE');
+    setNT('ASDBCFTE');
+    $('#ter').val('asd');
+    $('#terEX').val('asd120()*+i');
+    setTerEX('asd120()*+i');
 
-  /* let G =
+    /* let G =
 `S > A B
 B > 1 A B | &
 A > F C
 C > 2 F C | &
 F > a S s | d`; */
 
-/*   let G =
+    /*   let G =
 `S > A B
 B > + A B | &
 A > F C
 C > * F C | &
 F > ( S ) | id`; */
-// entrada para teste = ( id * id ) + id
+    // entrada para teste = ( id * id ) + id
 
-  let G = `E > T E'
+    let G = `E > T E'
 E' > + T E' | &
 T > F T'
 T' > * F T' | &
 F > ( E ) | id`;
-// entrada para teste = id + id * id
+    // entrada para teste = id + id * id
 
-  $('#prod').val(G);
-  $('#si').val('E');
+    $('#prod').val(G);
+    $('#si').val('E');
 
-  setProd(G);
+    setProd(G);
+    $('#entrada').val('id + id * id');
+  } else {
+    $('#nter').val('');
+    setNT('');
+    $('#ter').val('');
+    $('#terEX').val('');
+    setTerEX('');
+    $('#prod').val('');
+    $('#si').val('');
+
+    setProd(G);
+    $('#entrada').val('');
+  }
 };
 
 //Esses sets pegam os dados escritos nas caixas a esquerda, processam eles,
