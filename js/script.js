@@ -20,8 +20,9 @@ let somenteTabular = true;
 
 
 //padrão para testes
-function exemploTeste() {
-  if (!document.getElementById('defaultCheck1').checked) {
+function exemploTeste(test) {
+  if (test == 1) {
+    $('#defaultCheck3').val('2');
     $('#nter').val('ASDBCFTE');
     setNT('ASDBCFTE');
     $('#ter').val('asd');
@@ -56,6 +57,7 @@ F > ( E ) | id`;
     setProd(G);
     $('#entrada').val('id + id * id');
   } else {
+    $('#defaultCheck3').val('1');
     $('#nter').val('');
     setNT('');
     $('#ter').val('');
@@ -64,7 +66,7 @@ F > ( E ) | id`;
     $('#prod').val('');
     $('#si').val('');
 
-    setProd(G);
+    setProd('');
     $('#entrada').val('');
   }
 };

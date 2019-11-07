@@ -47,7 +47,7 @@
         <label class="form-check-label offset-1" for="defaultCheck2">
           Analisador preditivo tabular
         </label><br>
-        <input class="form-check-input col-2" onclick="exemploTeste()" type="checkbox" id="defaultCheck3">
+        <input class="form-check-input col-2" onclick="exemploTeste(this.value)" value='1' type="checkbox" id="defaultCheck3">
         <label class="form-check-label offset-1" for="defaultCheck3">
           Exemplo para Analisador preditivo  tabular
         </label>
@@ -136,7 +136,7 @@
         </div>
       </div>
       <div class="row">
-        <input type="text" class="form-control col-5" placeholder=" Entrada (ex.: ( id * id ) + id)" id="entrada" />
+        <input type="text" class="form-control col-5 offset-2" placeholder=" Entrada (ex.: ( id * id ) + id)" id="entrada" />
         <div onclick="runEntrada()" class="col-3">
           <button type="button" class="btn btn-default">Acionar</button>
         </div>
