@@ -40,12 +40,14 @@ B > + A B | &
 A > F C
 C > * F C | &
 F > ( S ) | id`; */
+// entrada para teste = ( id * id ) + id
 
   let G = `E > T E'
 E' > + T E' | &
 T > F T'
 T' > * F T' | &
 F > ( E ) | id`;
+// entrada para teste = id + id * id
 
   $('#prod').val(G);
   $('#si').val('E');
