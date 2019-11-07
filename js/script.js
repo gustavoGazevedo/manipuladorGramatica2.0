@@ -4,6 +4,7 @@
 /* eslint-disable no-undef */
 
 //teste para descobrir o tipo de gramática
+// globais
 let [gr, glc, gsc, gi] = new Array(4).fill(true);
 let novaProducao = {};
 setLenght();
@@ -21,37 +22,36 @@ let somenteTabular = true;
 //padrão para testes
 window.onload = () => {
   $('#nter').val('ASDBCFTE');
+  setNT('ASDBCFTE');
   $('#ter').val('asd');
   $('#terEX').val('asd120()*+i');
+  setTerEX('asd120()*+i');
 
-/*   $('#prod').val(
-`S > 0 A | 1 B
-A > 1 B | 2
-B > 0 A | 2`); */
-
-/*   $('#prod').val(
+  /* let G =
 `S > A B
 B > 1 A B | &
 A > F C
 C > 2 F C | &
-F > a S s | d`); */
+F > a S s | d`; */
 
-  /* $('#prod').val(
+/*   let G =
 `S > A B
 B > + A B | &
 A > F C
 C > * F C | &
-F > ( S ) | d`); */
+F > ( S ) | id`; */
 
-  $('#prod').val(
-`E > T E'
+  let G = `E > T E'
 E' > + T E' | &
 T > F T'
 T' > * F T' | &
-F > ( E ) | id`);
+F > ( E ) | id`;
+
+  $('#prod').val(G);
   $('#si').val('E');
 
-}
+  setProd(G);
+};
 
 //Esses sets pegam os dados escritos nas caixas a esquerda, processam eles,
 //e escrevem a gramática na caixa da direita
@@ -601,6 +601,7 @@ function setLenght() {
 
 // novo código cadeira de compiladores
 
+// globais novas
 let first = [],
     follow = [],
     linhasGram = [],
@@ -611,6 +612,7 @@ function analisadorTabular() {
   //func que faz/chama toda a nova parte
   $('#tabelaHr').attr('hidden', false);
   $('#tabelaDiv').attr('hidden', false);
+  //reseta os valores
   first = [];
   follow = [];
   linhasGram = [];
@@ -634,6 +636,7 @@ function somenteTabularFunc() {
 }
 
 function setTerEX(ter) {
+  // função que escreve na tela as terminais escritas
   let aux = '';
   let aws = ter.split('');
   for (let key in aws) {
@@ -698,6 +701,7 @@ function firstAndFollow() {
         direita: lin.direita,
         first: []
       });
+      //regra 1, procura por todos os que começam com terminais
       for (const i of lin.direita) {
         if (
           !/[A-Z]/g.test(i[0]) &&
@@ -714,6 +718,7 @@ function firstAndFollow() {
       });
     }
   }
+  // regra 2, decrescente, substitui as terminais pelo first necessários
   for (let i = first.length - 1; i >= 0; i--) {
     if (first[i].first.length == 0) {
       for (const a of first) {
@@ -725,7 +730,7 @@ function firstAndFollow() {
   }
 
   // follow
-  //regra 1
+  //regra 1, add $ para o inicial e cria os outros follows
   for (const lin of linhasGram) {
     if (lin.esquerda == inicio) {
       follow.push({
@@ -746,7 +751,7 @@ function firstAndFollow() {
     for (const aws of follow) {
       for (const a in aws.direita) {
         if (aws.direita[a][1] == follow[lin].esquerda) {
-          //regra 2
+          //regra 2, se tiver 3 char e não for NT, add para o follow, se não add o first do NT para o follow menos o vazio
           if (aws.direita[a].length == 3) {
             if (!/[A-Z]/g.test(aws.direita[a][2])) {
               follow[lin].follow.push(aws.direita[a][2]);
@@ -758,7 +763,7 @@ function firstAndFollow() {
                     e => e !== '&'
                   );
                 }
-                //regra 3 se length == 3
+                //regra 3 se length == 3, se o first da NT possuir vazio, add o follow do NT para o follow
                 if (b.first.includes('&')) {
                   if (aws.follow.length > 0) {
                     follow[lin].follow.push(...aws.follow);
@@ -769,7 +774,7 @@ function firstAndFollow() {
               }
             }
           }
-          // regra 3
+          // regra 3, add o follow do NT para o follow
           if (aws.direita[a].length == 2) {
             if (aws.follow.length > 0) {
               follow[lin].follow.push(...aws.follow);
@@ -788,6 +793,8 @@ function firstAndFollow() {
   for (const aws of first) {
     aws.first = [...new Set(aws.first)];
   }
+
+  // desenha ma tela
   let tableBody = `<tr>`;
   for (const i in first) {
     tableBody += `<th class="tableRow" scope="row">${first[i].esquerda}</th>`;
@@ -814,6 +821,7 @@ function firstAndFollow() {
 }
 
 function construirTabelaPreditiva() {
+  //pega todos os terminais usados menos o vazio
   analisadorTabela = [];
   for (const i in linhasGram) {
     for (const f of first[i].first) {
@@ -823,15 +831,22 @@ function construirTabelaPreditiva() {
       terminaisUsadas.push(f);
     }
   }
+
+  //tira as duplicatas e o vazio
   terminaisUsadas = [... new Set(terminaisUsadas)];
   terminaisUsadas = terminaisUsadas.filter(e => e !== '&');
   
   //construindo tabela
   for (const [x, lin] of linhasGram.entries()) {
     let aux = [];
+    // cria uma matriz auxiliar com o nome sendo os terminais
     for (const i of terminaisUsadas) {
       aux[i] = [];
     }
+    // se tiver mais de um item a direita, testa para ver se é vazio ou não, se não, add o primeiro ao primeiro first
+    // e o segundo ao segundo, se sim add NT -> VAZIO para todos os follows
+    // se só tiver um item a direita, testa se é vazio, se for add NT -> VAZIO para todos os follows, se não add
+    // a direita para todos os firsts
     if (lin.direita.length > 1) {
       if (lin.direita[1] != '&') {
         let aws = [...first[x].first];
@@ -872,11 +887,13 @@ function construirTabelaPreditiva() {
   0: {esquerda: "S", tabela: Array(2)}
   1:
     esquerda: "B"
-    tabela: Array(3)
-      0:
-        +: (3) ["+", "A", "B"]
-      1: {$: Array(1)}
-      2: {): Array(1)}
+      tabela: Array(0)
+        $: ["&"]
+        (: []
+        ): ["&"]
+        *: []
+        +: (3) ["+", "T", "E'"]
+        id: []
   2: {esquerda: "A", tabela: Array(2)}
   3: {esquerda: "C", tabela: Array(4)}  
   4: {esquerda: "F", tabela: Array(2)}
@@ -903,14 +920,15 @@ function construirTabelaPreditiva() {
     }
     tableBody += `</tr><tr>`;
   }
-  //escreve na tela o First Follow
+  //escreve na tela
   tableBody = tableBody.replace(/&/g, 'ε');
   $('#tableBodyTA').html(tableBody);
 }
 
 function runEntrada() {
-  let entrada = $("#entrada").val;
+  let entrada = $('#entrada').val();
   entrada = entrada.split(' ');
+  entrada.push('$');
   let pilha = ['$', inicio];
   let tabelaEntrada = [];
   tabelaEntrada.push({
@@ -918,4 +936,49 @@ function runEntrada() {
     entrada: entrada.join(''),
     saida: ''
   });
+  // enquanto a pilha não chegar no final, faz um pop da pilha e pega o primeiro da fila, se o primeiro da fila for o mesmo
+  // que o da pilha, le aquele item, e retira ele da fila
+  while (pilha[pilha.length - 1] != '$') {
+    let popPile = pilha.pop(),
+      shiftQueue = entrada[0],
+      saida = '';
+    if (popPile == shiftQueue) {
+      tabelaEntrada.push({
+        pilha: pilha.join(''),
+        entrada: entrada.join(''),
+        saida: `lê ${shiftQueue}`
+      });
+      entrada.shift();
+      popPile = pilha.pop();
+      shiftQueue = entrada[0];
+    }
+    // testa por todos os itens da tabela procurando pelo NT correspondente, se achar, add para a pilha e add a saida 
+    for (const i of analisadorTabela) {
+      if (i.esquerda == popPile && i.tabela[shiftQueue].length > 0) {
+        saida = `${i.esquerda} > ${i.tabela[shiftQueue].join('')}`;
+        for (let index = i.tabela[shiftQueue].length - 1; index >= 0; index--) {
+          pilha.push(i.tabela[shiftQueue][index]);
+        }
+      }
+    }
+    tabelaEntrada.push({
+      pilha: pilha.join(''),
+      entrada: entrada.join(''),
+      saida: saida
+    });
+  }
+  // desenha a tabela
+  let tableBody = `<tr>`;
+  let style = 'style="padding-right: 100px; padding-left: 100px"'
+  for (const i in tabelaEntrada) {
+    tableBody += `<td class="tableRow" scope="row">${i}</td>`;
+    tableBody += `<td class="tableRow" ${style} scope="row">${tabelaEntrada[i].pilha}</td>`;
+    tableBody += `<td class="tableRow" ${style} scope="row">${tabelaEntrada[i].entrada}</td>`;
+    tableBody += `<td class="tableRow" ${style} scope="row">${tabelaEntrada[i].saida.replace(/>/g, '→')}</td>`;
+    tableBody += `</tr><tr>`;
+  }
+  //escreve na tela
+  tableBody = tableBody.replace(/&/g, 'ε');
+  $('#tableBodyATB').html(tableBody);
+  $('#tabelaFinal').attr('hidden', false);
 }

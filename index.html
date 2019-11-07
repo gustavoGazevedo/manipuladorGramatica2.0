@@ -45,7 +45,7 @@
         </label><br>
         <input class="form-check-input col-2" onclick="somenteTabularFunc()" type="checkbox" id="defaultCheck2">
         <label class="form-check-label offset-1" for="defaultCheck2">
-          Somente analisador preditivo tabular
+          Analisador preditivo tabular
         </label>
       </div>
       <div class="col-6">
@@ -124,7 +124,7 @@
         <div class="col-9 tableDiv">
           <table id="tabelaTA" class="pure-table pure-table-bordered">
             <thead id="tableHeadTA">
-              
+
             </thead>
             <tbody id="tableBodyTA">
             </tbody>
@@ -132,10 +132,28 @@
         </div>
       </div>
       <div class="row">
-          <input type="text" class="form-control col-5" placeholder=" Entrada (ex.: ( id * id ) + id)" id="entrada" />
-          <div onclick="runEntrada()" class="col-3">
-              <button type="button" class="btn btn-default">Acionar</button>
-            </div>
+        <input type="text" class="form-control col-5" placeholder=" Entrada (ex.: ( id * id ) + id)" id="entrada" />
+        <div onclick="runEntrada()" class="col-3">
+          <button type="button" class="btn btn-default">Acionar</button>
+        </div>
+      </div>
+      <br>
+      <br>
+      <div id="tabelaFinal" class="row" hidden>
+        <div class="divTabelaFinal">
+          <table id="tabelaATB" class="pure-table pure-table-bordered">
+            <thead id="tableHeadATB">
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Pilha</th>
+                <th scope="col">Entrada</th>
+                <th scope="col">Saida</th>
+              </tr>
+            </thead>
+            <tbody id="tableBodyATB">
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
     <br>

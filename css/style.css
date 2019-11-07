@@ -139,3 +139,10 @@ button:hover {
     transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
     padding: .375rem .75rem;
 }
+
+.divTabelaFinal {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    display: table-cell;
+}
